@@ -2,25 +2,9 @@ version: '3.4'
 services:
   #rabbitmq:
   #  image: rabbitmq:3-management-alpine
-  #  container_name: rabbitmq
-  #  volumes:
-  #    - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-  #    - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/mnesia
-  #    - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
-  #  environment:
-  #    RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-  #    RABBITMQ_DEFAULT_USER: "admin"
-  #    RABBITMQ_DEFAULT_PASS: "admin"
-  #    RABBITMQ_DEFAULT_VHOST: "/"
   #  ports:
-  #    - 5672:5672
-  #    - 15672:15672
-
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+  #    - "15672:15672"
+  #    - "5672:5672"
   postgres:
     image: postgres
     volumes:
