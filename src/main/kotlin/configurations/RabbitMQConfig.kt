@@ -1,5 +1,7 @@
 package event.observability.camunda.configurations
 
+import org.springframework.amqp.core.Binding
+import org.springframework.amqp.core.Declarables
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -10,25 +12,26 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory
 
+
 @Configuration
 class RabbitMQConfig{
+    val exchangeName = "eshop_event_bus"
     val queueName = "camundaqueue"
 
     @Bean
-    fun queue(): Queue? {
-        return Queue(queueName, true)
+    fun bindings(): Declarables? {
+        return Declarables(
+            Queue(queueName, true),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStartedIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStatusChangedToAwaitingValidationIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStatusChangedToCancelledIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStockConfirmedIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStockRejectedIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStatusChangedToStockConfirmedIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderPaymentSucceededIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderPaymentFailedIntegrationEvent", null),
+            Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStatusChangedToPaidIntegrationEvent", null))
     }
-
-    /*@Bean
-    fun container(connectionFactory: ConnectionFactory?,
-                  listenerAdapter: MessageListenerAdapter?): SimpleMessageListenerContainer? {
-        val container = SimpleMessageListenerContainer()
-        container.connectionFactory = connectionFactory
-        container.setQueueNames(queueName)
-        container.setMessageListener(listenerAdapter)
-
-        return container
-    }*/
 
     @Bean
     fun rabbitTemplate(connectionFactory: ConnectionFactory?): RabbitTemplate? {
@@ -53,10 +56,4 @@ class RabbitMQConfig{
     fun configureRabbitListeners(registrar: RabbitListenerEndpointRegistrar) {
         registrar.messageHandlerMethodFactory = myHandlerMethodFactory()
     }
-
-    /*@Bean
-    fun listenerAdapter(receiver: WorkflowConsumer?): MessageListenerAdapter? {
-        return MessageListenerAdapter(receiver, "receiveMessage")
-    }*/
-
 }
