@@ -1,8 +1,6 @@
 package event.observability.camunda.configurations
 
-import org.springframework.amqp.core.Binding
-import org.springframework.amqp.core.Declarables
-import org.springframework.amqp.core.Queue
+import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar
@@ -12,7 +10,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory
 
-
 @Configuration
 class RabbitMQConfig{
     val exchangeName = "eshop_event_bus"
@@ -21,6 +18,7 @@ class RabbitMQConfig{
     @Bean
     fun bindings(): Declarables? {
         return Declarables(
+            DirectExchange(exchangeName, false, false),
             Queue(queueName, true),
             Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStartedIntegrationEvent", null),
             Binding(queueName, Binding.DestinationType.QUEUE, exchangeName, "OrderStatusChangedToAwaitingValidationIntegrationEvent", null),

@@ -16,7 +16,7 @@ class WorkflowConsumer(val runtimeService: RuntimeService){
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @RabbitListener(queues = ["camundaqueue"])
-    fun receivedMessage(event: OrderEvent, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) routingKey: String/*, messageProperties: MessageProperties*/) {
+    fun receivedMessage(event: OrderEvent, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) routingKey: String) {
         println("Received the message $event due to the binding $routingKey")
 
         val jsonString: String = ObjectMapper().writeValueAsString(event)
@@ -26,7 +26,7 @@ class WorkflowConsumer(val runtimeService: RuntimeService){
                     .processInstanceBusinessKey(event.OrderId)
                     .setVariable("payload", jsonString)
                     .correlateWithResult()
-            logger.info("Event $event is running with process instance ${result.processInstance}.")
+            logger.info("Event $event successfully correlated to process instance ${result.processInstance}.")
         } catch (e: MismatchingMessageCorrelationException) {
             logger.warn("Event $event couldn't be related with any workflow. Will be correlated to the error process.")
             runtimeService.createMessageCorrelation("NOT_CORRELATED_MSGS")
