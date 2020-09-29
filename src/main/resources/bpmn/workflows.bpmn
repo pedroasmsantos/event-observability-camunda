@@ -74,7 +74,7 @@
     <bpmn:boundaryEvent id="IntermediateThrowEvent_1afzsqj" name="5 Minutes" attachedToRef="OrderStatusChangedToAwaitingValidationIntegrationEvent">
       <bpmn:outgoing>SequenceFlow_1aau8pj</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:userTask id="Task_0xkhaop" name="Validate Failed Orders" camunda:assignee="admin">
