@@ -19,19 +19,20 @@ class WorkflowConsumer(val runtimeService: RuntimeService){
     fun receivedMessage(event: OrderEvent, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) routingKey: String) {
         println("Received the message $event due to the binding $routingKey")
 
-        val jsonString: String = ObjectMapper().writeValueAsString(event)
-
         try {
             val result = runtimeService.createMessageCorrelation(routingKey)
                     .processInstanceBusinessKey(event.OrderId)
-                    .setVariable("payload", jsonString)
+                    .setVariable("orderId", event.OrderId)
+                    .setVariable("orderStatus", event.OrderStatus)
                     .correlateWithResult()
+
             logger.info("Event $event successfully correlated to process instance ${result.processInstance}.")
         } catch (e: MismatchingMessageCorrelationException) {
             logger.warn("Event $event couldn't be related with any workflow. Will be correlated to the error process.")
             runtimeService.createMessageCorrelation("NOT_CORRELATED_MSGS")
                     .processInstanceBusinessKey(event.OrderId)
-                    .setVariable("payload", jsonString)
+                    .setVariable("orderId", event.OrderId)
+                    .setVariable("orderStatus", event.OrderStatus)
                     .correlateWithResult()
         }
     }

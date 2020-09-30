@@ -1,16 +1,16 @@
 package event.observability.camunda.listeners
 
-import org.camunda.bpm.engine.IdentityService
 import org.camunda.bpm.engine.delegate.DelegateTask
 import org.camunda.bpm.engine.delegate.TaskListener
-import org.camunda.bpm.engine.identity.User
 import org.camunda.bpm.engine.impl.context.Context
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
+import org.springframework.stereotype.Service
 
+@Service
 class UserValidationListener : TaskListener {
     override fun notify(delegateTask: DelegateTask) {
         val taskId = delegateTask.id
@@ -20,8 +20,8 @@ class UserValidationListener : TaskListener {
         // Assign recipient address if a specific user is assigned to the task
         if(assignee != null){
             // Get User Profile from User Management
-            val identityService: IdentityService = Context.getProcessEngineConfiguration().getIdentityService()
-            val user: User = identityService.createUserQuery().userId(assignee).singleResult()
+            val identityService = Context.getProcessEngineConfiguration().getIdentityService()
+            val user = identityService.createUserQuery().userId(assignee).singleResult()
 
             if (user != null) {
                 // Get Email Address from User Profile
